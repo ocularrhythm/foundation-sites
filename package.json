@@ -19,6 +19,7 @@
   "devDependencies": {
     "bootcamp": "^1.1.7",
     "browser-sync": "^2.8.2",
+    "clipboard-js": "^0.2.0",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^2.3.1",
     "gulp-cached": "^1.0.4",
@@ -54,8 +55,6 @@
     "string-template": "^0.2.1",
     "supercollider": "^1.1.0",
     "typeahead.js": "^0.11.1",
-    "zeroclipboard": "^2.2.0"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/zurb/foundation-sites"
