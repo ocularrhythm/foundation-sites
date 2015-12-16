@@ -66,7 +66,10 @@ $buttongroup-expand-max: 6 !default;
 ) {
   #{$selector} {
     width: 100%;
-    border-#{$global-right}: 0;
+    
+    &:not(:last-child) {
+      border-#{$global-right}: $buttongroup-spacing solid;
+    }
   }
 }
 
