@@ -54,7 +54,8 @@
     "run-sequence": "^1.1.4",
     "string-template": "^0.2.1",
     "supercollider": "^1.1.0",
-    "typeahead.js": "^0.11.1",
+    "typeahead.js": "^0.11.1"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/zurb/foundation-sites"
