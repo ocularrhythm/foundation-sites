@@ -1,7 +1,7 @@
 var gulp = require('gulp');
 var concat = require('gulp-concat');
 
-var FOUNDATION = [
+var FOUNDATION = [Cl
   'js/foundation.core.js',
   'js/foundation.util.*.js',
   'js/*.js'
@@ -14,7 +14,7 @@ var DEPS = [
 ];
 
 var DOCS = [
-  'node_modules/zeroclipboard/dist/ZeroClipboard.js',
+  'node_modules/clipboard-js/clipboard.js',
   'node_modules/typeahead.js/dist/typeahead.bundle.js',
   'docs/assets/js/docs.*.js',
   'docs/assets/js/docs.js'
