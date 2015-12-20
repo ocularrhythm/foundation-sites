@@ -1,4 +1,5 @@
 !function($) {
+
 "use strict";
 
 var FOUNDATION_VERSION = '6.0.6';
@@ -6,6 +7,7 @@ var FOUNDATION_VERSION = '6.0.6';
 // Global Foundation object
 // This is attached to the window, or used as a module for AMD/Browserify
 var Foundation = {
+
   version: FOUNDATION_VERSION,
 
   /**
@@ -25,9 +27,10 @@ var Foundation = {
   /**
    * Returns a boolean for RTL support
    */
-  rtl: function(){
+  rtl: function() {
     return $('html').attr('dir') === 'rtl';
   },
+
   /**
    * Defines a Foundation plugin, adding it to the `Foundation` namespace and the list of plugins to initialize when reflowing.
    * @param {Object} plugin - The constructor of the plugin.
@@ -51,12 +54,12 @@ var Foundation = {
    * @param {Object} plugin - an instance of a plugin, usually `this` in context.
    * @fires Plugin#init
    */
-  registerPlugin: function(plugin){
+  registerPlugin: function(plugin) {
     var pluginName = functionName(plugin.constructor).toLowerCase();
 
     plugin.uuid = this.GetYoDigits(6, pluginName);
 
-    if(!plugin.$element.attr('data-' + pluginName)){
+    if (!plugin.$element.attr('data-' + pluginName)) {
       plugin.$element.attr('data-' + pluginName, plugin.uuid);
     }
           /**
@@ -69,6 +72,7 @@ var Foundation = {
 
     return;
   },
+
   /**
    * @function
    * Removes the pointer for an instance of a Plugin from the Foundation._activePlugins obj.
@@ -76,7 +80,7 @@ var Foundation = {
    * @param {Object} plugin - an instance of a plugin, usually `this` in context.
    * @fires Plugin#destroyed
    */
-  unregisterPlugin: function(plugin){
+  unregisterPlugin: function(plugin) {
     var pluginName = functionName(plugin.constructor).toLowerCase();
 
     delete this._activePlugins[plugin.uuid];
@@ -96,23 +100,23 @@ var Foundation = {
    * @param {String} plugins - optional string of an individual plugin key, attained by calling `$(element).data('pluginName')`, or string of a plugin class i.e. `'dropdown'`
    * @default If no argument is passed, reflow all currently active plugins.
    */
-  _reflow: function(plugins){
+  _reflow: function(plugins) {
     var actvPlugins = Object.keys(this._activePlugins);
     var _this = this;
 
-    if(!plugins){
+    if (!plugins) {
       actvPlugins.forEach(function(p){
         _this._activePlugins[p]._init();
       });
 
-    }else if(typeof plugins === 'string'){
+    } else if (typeof plugins === 'string') {
       var namespace = plugins.split('-')[1];
 
-      if(namespace){
+      if (namespace) {
 
         this._activePlugins[plugins]._init();
 
-      }else{
+      } else {
         namespace = new RegExp(plugins, 'i');
 
         actvPlugins.filter(function(p){
@@ -122,7 +126,6 @@ var Foundation = {
         });
       }
     }
-
   },
 
   /**
@@ -133,10 +136,11 @@ var Foundation = {
    * @default {String} '' - if no plugin name is provided, nothing is appended to the uid.
    * @returns {String} - unique id
    */
-  GetYoDigits: function(length, namespace){
+  GetYoDigits: function(length, namespace) {
     length = length || 6;
     return Math.round((Math.pow(36, length + 1) - Math.random() * Math.pow(36, length))).toString(36).slice(1) + (namespace ? '-' + namespace : '');
   },
+
   /**
    * Initialize plugins on any elements within `elem` (and `elem` itself) that aren't already initialized.
    * @param {Object} elem - jQuery object containing the element to check inside. Also checks the element itself, unless it's the `document` object.
@@ -147,9 +151,9 @@ var Foundation = {
     // If plugins is undefined, just grab everything
     if (typeof plugins === 'undefined') {
       plugins = Object.keys(this._plugins);
-    }
+
     // If plugins is a string, convert it to an array with one item
-    else if (typeof plugins === 'string') {
+    } else if (typeof plugins === 'string') {
       plugins = [plugins];
     }
 
@@ -161,54 +165,59 @@ var Foundation = {
       var plugin = _this._plugins[name];
 
       // Localize the search to all elements inside elem, as well as elem itself, unless elem === document
-      var $elem = $(elem).find('[data-'+name+']').addBack('[data-'+name+']');
+      var $elem = $(elem).find('[data-' + name + ']').addBack('[data-' + name + ']');
 
       // For each plugin found, initialize it
-      $elem.each(function() {
-        var $el = $(this),
-            opts = {};
+      $elem.each( function() {
+        var $el = $(this);
+        var opts = {};
+
         // Don't double-dip on plugins
         if ($el.data('zf-plugin')) {
-          console.warn("Tried to initialize "+name+" on an element that already has a Foundation plugin.");
+          console.warn("Tried to initialize " + name + " on an element that already has a Foundation plugin.");
           return;
         }
 
-        if($el.attr('data-options')){
-          var thing = $el.attr('data-options').split(';').forEach(function(e, i){
+        if ($el.attr('data-options')) {
+          var thing = $el.attr('data-options').split(';').forEach( function(e, i) {
             var opt = e.split(':').map(function(el){ return el.trim(); });
-            if(opt[0]) opts[opt[0]] = parseValue(opt[1]);
+            if (opt[0]) opts[opt[0]] = parseValue(opt[1]);
           });
         }
-        try{
+
+        try {
           $el.data('zf-plugin', new plugin($(this), opts));
-        }catch(er){
+        } catch(er) {
           console.error(er);
-        }finally{
+        } finally {
           return;
         }
       });
     });
   },
+
   getFnName: functionName,
-  transitionend: function($elem){
+  transitionend: function($elem) {
     var transitions = {
       'transition': 'transitionend',
       'WebkitTransition': 'webkitTransitionEnd',
       'MozTransition': 'transitionend',
       'OTransition': 'otransitionend'
     };
-    var elem = document.createElement('div'),
-        end;
 
-    for (var t in transitions){
-      if (typeof elem.style[t] !== 'undefined'){
+    var elem = document.createElement('div');
+    var end;
+
+    for (var t in transitions) {
+      if (typeof elem.style[t] !== 'undefined') {
         end = transitions[t];
       }
     }
-    if(end){
+
+    if (end) {
       return end;
-    }else{
-      end = setTimeout(function(){
+    } else {
+      end = setTimeout( function() {
         $elem.triggerHandler('transitionend', [$elem]);
       }, 1);
       return 'transitionend';
@@ -228,7 +237,7 @@ Foundation.util = {
   throttle: function (func, delay) {
     var timer = null;
 
-    return function () {
+    return function() {
       var context = this, args = arguments;
 
       if (timer === null) {
@@ -248,36 +257,37 @@ Foundation.util = {
  * @param {String|Array} method - An action to perform on the current jQuery object.
  */
 var foundation = function(method) {
-  var type = typeof method,
-      $meta = $('meta.foundation-mq'),
-      $noJS = $('.no-js');
+  var type = typeof method;
+  var $meta = $('meta.foundation-mq');
+  var $noJS = $('.no-js');
 
-  if(!$meta.length){
+  if (!$meta.length) {
     $('<meta class="foundation-mq">').appendTo(document.head);
   }
-  if($noJS.length){
+
+  if ($noJS.length) {
     $noJS.removeClass('no-js');
   }
 
-  if(type === 'undefined'){//needs to initialize the Foundation object, or an individual plugin.
+  if (type === 'undefined') {//needs to initialize the Foundation object, or an individual plugin.
     Foundation.MediaQuery._init();
     Foundation.reflow(this);
-  }else if(type === 'string'){//an individual method to invoke on a plugin or group of plugins
+  } else if(type === 'string') {//an individual method to invoke on a plugin or group of plugins
     var args = Array.prototype.slice.call(arguments, 1);//collect all the arguments, if necessary
     var plugClass = this.data('zfPlugin');//determine the class of plugin
 
-    if(plugClass !== undefined && plugClass[method] !== undefined){//make sure both the class and method exist
-      if(this.length === 1){//if there's only one, call it directly.
+    if (plugClass !== undefined && plugClass[method] !== undefined) {//make sure both the class and method exist
+      if (this.length === 1) {//if there's only one, call it directly.
           plugClass[method].apply(plugClass, args);
-      }else{
+      } else {
         this.each(function(i, el){//otherwise loop through the jQuery collection and invoke the method on each
           plugClass[method].apply($(el).data('zfPlugin'), args);
         });
       }
-    }else{//error for no class or no method
+    } else {//error for no class or no method
       throw new ReferenceError("We're sorry, '" + method + "' is not an available method for " + (plugClass ? functionName(plugClass) : 'this element') + '.');
     }
-  }else{//error for invalid argument type
+  } else {//error for invalid argument type
     throw new TypeError("We're sorry, '" + type + "' is not a valid parameter. You must use a string representing the method you wish to invoke.");
   }
   return this;
@@ -288,8 +298,11 @@ $.fn.foundation = foundation;
 
 // Polyfill for requestAnimationFrame
 (function() {
-  if (!Date.now || !window.Date.now)
-    window.Date.now = Date.now = function() { return new Date().getTime(); };
+  if (!Date.now || !window.Date.now) {
+    window.Date.now = Date.now = function() { 
+      return new Date().getTime(); 
+    };
+  }
 
   var vendors = ['webkit', 'moz'];
   for (var i = 0; i < vendors.length && !window.requestAnimationFrame; ++i) {
@@ -298,10 +311,12 @@ $.fn.foundation = foundation;
       window.cancelAnimationFrame = (window[vp+'CancelAnimationFrame']
                                  || window[vp+'CancelRequestAnimationFrame']);
   }
+
   if (/iP(ad|hone|od).*OS 6/.test(window.navigator.userAgent)
-    || !window.requestAnimationFrame || !window.cancelAnimationFrame) {
-    var lastTime = 0;
-    window.requestAnimationFrame = function(callback) {
+    || !window.requestAnimationFrame
+    || !window.cancelAnimationFrame) {
+      var lastTime = 0;
+      window.requestAnimationFrame = function(callback) {
         var now = Date.now();
         var nextTime = Math.max(lastTime + 16, now);
         return setTimeout(function() { callback(lastTime = nextTime); },
@@ -309,16 +324,20 @@ $.fn.foundation = foundation;
     };
     window.cancelAnimationFrame = clearTimeout;
   }
+
   /**
    * Polyfill for performance.now, required by rAF
    */
-  if(!window.performance || !window.performance.now){
+  if (!window.performance || !window.performance.now) {
     window.performance = {
       start: Date.now(),
-      now: function(){ return Date.now() - this.start; }
+      now: function() { 
+        return Date.now() - this.start; 
+      }
     };
   }
 })();
+
 if (!Function.prototype.bind) {
   Function.prototype.bind = function(oThis) {
     if (typeof this !== 'function') {
@@ -327,10 +346,10 @@ if (!Function.prototype.bind) {
       throw new TypeError('Function.prototype.bind - what is trying to be bound is not callable');
     }
 
-    var aArgs   = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP    = function() {},
-        fBound  = function() {
+    var aArgs   = Array.prototype.slice.call(arguments, 1);
+    var fToBind = this;
+    var fNOP    = function() {};
+    var fBound  = function() {
           return fToBind.apply(this instanceof fNOP
                  ? this
                  : oThis,
@@ -346,26 +365,31 @@ if (!Function.prototype.bind) {
     return fBound;
   };
 }
+
 // Polyfill to get the name of a function in IE9
 function functionName(fn) {
   if (Function.prototype.name === undefined) {
     var funcNameRegex = /function\s([^(]{1,})\(/;
     var results = (funcNameRegex).exec((fn).toString());
     return (results && results.length > 1) ? results[1].trim() : "";
-  }
-  else if (fn.prototype === undefined) {
+  } else if (fn.prototype === undefined) {
     return fn.constructor.name;
-  }
-  else {
+  } else {
     return fn.prototype.constructor.name;
   }
 }
-function parseValue(str){
-  if(/true/.test(str)) return true;
-  else if(/false/.test(str)) return false;
-  else if(!isNaN(str * 1)/* && typeof (str * 1) === "number"*/) return parseFloat(str);
+
+function parseValue(str) {
+  if (/true/.test(str)) {
+    return true;
+  } else if (/false/.test(str)) {
+    return false;
+  } else if (!isNaN(str * 1) { /* && typeof (str * 1) === "number"*/
+    return parseFloat(str);
+  }
   return str;
 }
+
 // Convert PascalCase to kebab-case
 // Thank you: http://stackoverflow.com/a/8955580
 function hyphenate(str) {
